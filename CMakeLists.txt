@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.6)
 project(cuBERT VERSION 0.0.5 LANGUAGES C CXX)
 
+#ADDED mpi
+SET(CMAKE_C_COMPILER mpicc)
+SET(CMAKE_CXX_COMPILER mpicxx)
+
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/)
@@ -8,7 +12,7 @@ set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/)
 add_definitions(-D_GLIBCXX_USE_CXX11_ABI=0)
 
 option(cuBERT_ENABLE_GPU "Enable GPU support" OFF)
-option(cuBERT_ENABLE_MKL_SUPPORT "Enable Intel MKL support" OFF)
+option(cuBERT_ENABLE_MKL_SUPPORT "Enable Intel MKL support" ON)
 option(cuBERT_SYSTEM_MKL "Use system MKL" OFF)
 option(cuBERT_SYSTEM_PROTOBUF "Use system Protobuf" OFF)
 
@@ -20,12 +24,14 @@ if (OPENMP_FOUND)
     set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
     set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
+    #saving the openmpi path for the compilation of the mpi_added_executables
+    include_directories(${OPENMPI_PATH})
 endif()
 
 include(cub)
 include(utf8proc)
 include(protobuf-c)
-include(googletest)
+include(googletest )
 
 set(cuBERT_EXTERNAL_DEPENDENCIES
         cub
@@ -151,8 +157,8 @@ add_executable(cuBERT_test test/unit_test.cpp
         test/cuBERT/BertTest.cpp
         test/cuBERT/BertMTest.cpp
         test/cuBERT_test.cpp)
-target_link_libraries(cuBERT_test cuBERT ${googletest_STATIC_LIBRARIES})
-target_include_directories(cuBERT_test PUBLIC ${googletest_INCLUDE_DIRS})
+target_link_libraries(cuBERT_test cuBERT ${googletest_STATIC_LIBRARIES} ${OPENMPI_LIBRARIESi})
+target_include_directories(cuBERT_test PUBLIC ${googletest_INCLUDE_DIRS} ${OPENMPI_PATH})
 add_test(UnitTest cuBERT_test)
 
 
