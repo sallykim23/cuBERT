@@ -1,5 +1,6 @@
 #include "common_test.h"
 #include <mpi.h>
+<<<<<<< HEAD
 extern "C" int my_Init(int *argc, char ***argv);
 extern "C" int my_Barrier();
 extern "C" int my_Wtime();

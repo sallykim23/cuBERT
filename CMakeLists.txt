@@ -157,6 +157,7 @@ add_executable(cuBERT_test test/unit_test.cpp
         test/cuBERT/BertTest.cpp
         test/cuBERT/BertMTest.cpp
         test/cuBERT_test.cpp)
+
 set(PAPICNT_DIR "${CMAKE_SOURCE_DIR}/../Vapro/VAPRO/build_dummy3")
 target_link_libraries(cuBERT_test cuBERT ${googletest_STATIC_LIBRARIES} ${OPENMPI_LIBRARIES} "${PAPICNT_DIR}/libpapicnt.so") 
 target_include_directories(cuBERT_test PUBLIC ${googletest_INCLUDE_DIRS} ${OPENMPI_PATH})
