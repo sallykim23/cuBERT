@@ -18,6 +18,12 @@ const int batch_size = 128;
 const int seq_length = 32;
 const int hidden_size = 768;
 
+extern "C" void my_Init();
+extern "C" void my_Finalize();
+
+const int MAX_LOOP_LEN=10000;
+double local_time[MAX_LOOP_LEN];
+
 // define model output
 const int output_size = batch_size * hidden_size;
 cuBERT_OutputType output_type = cuBERT_POOLED_OUTPUT;
@@ -53,6 +59,8 @@ void benchmark(void* model,
 // OMP_NUM_THREADS=? KMP_BLOCKTIME=0 KMP_AFFINITY=granularity=fine,verbose,compact,1,0
 int main() {
     cuBERT_initialize();
+    
+    my_Init();
 
     std::default_random_engine e(0);
 
@@ -73,12 +81,14 @@ int main() {
 
     std::cout << "=== benchmark ===" << std::endl;
     for (int i = 0; i < 10; ++i) {
+        
         random_input(e, input_ids, input_mask, segment_ids, batch_size * seq_length);
+      
         benchmark(model, input_ids, input_mask, segment_ids, logits, result);
     }
 
     result.close();
     cuBERT_close(model, compute_type);
-
+    my_Finalize();
     cuBERT_finalize();
 }
