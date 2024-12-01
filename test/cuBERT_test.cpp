@@ -3,7 +3,6 @@
 #include <iostream>
 
 #include "cuBERT.h"
-
 class cuBertTest : public ::testing::Test {
 protected:
     void SetUp() override {
@@ -60,18 +59,14 @@ TEST_F(cuBertTest, compute_tokenize) {
     int batch_size = 2;
     int seq_length = 32;
     float output[batch_size];
-
     const char* text_a[] = {u8"知乎", u8"知乎"};
     const char* text_b[] = {u8"在家刷知乎", u8"知乎发现更大的世界"};
-
     void* model = cuBERT_open("bert_frozen_seq32.pb", max_batch_size, seq_length, 12, 12);
     void* tokenizer = cuBERT_open_tokenizer("vocab.txt");
-
     cuBERT_tokenize_compute(model, tokenizer, batch_size,
                             text_a,
                             text_b,
                             output, cuBERT_LOGITS);
-
     cuBERT_close_tokenizer(tokenizer);
     cuBERT_close(model);
 
